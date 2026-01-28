@@ -2,22 +2,191 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Test Valentine</title>
+<title>💖 My forever 💖</title>
+
+<style>
+body {
+    margin: 0;
+    background: linear-gradient(to bottom, #ffb6c1, #ff69b4);
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive;
+    overflow: hidden;
+}
+
+h1 {
+    margin-top: 80px;
+    color: white;
+}
+
+p {
+    color: white;
+    font-size: 22px;
+}
+
+.buttons {
+    margin-top: 40px;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#yes {
+    background: #ff1493;
+    color: white;
+}
+
+#no {
+    background: white;
+    color: #ff1493;
+    position: absolute;
+}
+
+/* inimioare */
+.heart {
+    position: fixed;
+    top: -10px;
+    font-size: 24px;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
+    }
+}
+
+/* ECRAN FINAL */
+#finalScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #ff69b4, #ff1493, #6a0036);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+    z-index: 999;
+}
+
+#finalScreen.active {
+    opacity: 1;
+}
+
+#finalScreen h1 {
+    color: white;
+    font-size: 48px;
+    transition: text-shadow 0.15s ease, transform 0.15s ease;
+}
+</style>
 </head>
-<body style="text-align:center; margin-top:50px; font-family:Arial,sans-serif; background:pink;">
 
-<h1>💖 Test Valentine 💖</h1>
-<p>Apasă butonul să înceapă magia!</p>
+<body>
 
-<button id="playButton">DA 💘</button>
+<h1>💖 Hey baby 💖</h1>
+<p>
+On Valentine's Day I have a really serious question 😏  
+<br><br>
+dO YOU WANNA BE MY FOREVER? 💕
+</p>
+
+<div class="buttons">
+    <button id="yes" onclick="yesClicked()">YES 💘</button>
+    <button id="no" onmouseover="moveNo()">NO 😈</button>
+</div>
+
+<!-- ECRAN FINAL -->
+<div id="finalScreen">
+    <h1 id="finalText">
+        I would choose you<br>
+        in every universe ✨💖
+    </h1>
+</div>
 
 <script>
 const audio = new Audio("music.mp3");
+audio.crossOrigin = "anonymous";
 
-document.getElementById("playButton").addEventListener("click", () => {
+let audioContext, analyser, source, dataArray;
+
+function yesClicked() {
+    document.body.innerHTML = "";
+    document.body.appendChild(document.getElementById("finalScreen"));
+
+    const screen = document.getElementById("finalScreen");
+    screen.style.display = "flex";
+
+    setTimeout(() => {
+        screen.classList.add("active");
+    }, 100);
+
+    startAudioAnalysis();
+}
+
+function startAudioAnalysis() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256;
+
+    source = audioContext.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    audio.loop = true;
     audio.play();
-    alert("Muzica ar trebui să pornească acum! ❤️");
-});
+
+    beatLoop();
+}
+
+function beatLoop() {
+    analyser.getByteFrequencyData(dataArray);
+
+    let sum = 0;
+    for (let i = 0; i < dataArray.length; i++) {
+        sum += dataArray[i];
+    }
+
+    let average = sum / dataArray.length;
+    const intensity = Math.min(average * 2, 255);
+
+    const text = document.getElementById("finalText");
+    text.style.textShadow = `
+        0 0 ${intensity / 6}px #fff,
+        0 0 ${intensity / 3}px #ffb6c1,
+        0 0 ${intensity}px #ff1493
+    `;
+    text.style.transform = scale(${1 + average / 500});
+
+    requestAnimationFrame(beatLoop);
+}
+
+function moveNo() {
+    const noBtn = document.getElementById("no");
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 50);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+}
+
+/* inimioare */
+setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 5000);
+}, 300);
 </script>
 
 </body>
