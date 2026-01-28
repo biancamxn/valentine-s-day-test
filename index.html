@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Test Valentine</title>
+</head>
+<body style="text-align:center; margin-top:50px; font-family:Arial,sans-serif; background:pink;">
+
+<h1>💖 Test Valentine 💖</h1>
+<p>Apasă butonul să înceapă magia!</p>
+
+<button id="playButton">DA 💘</button>
+
+<script>
+const audio = new Audio("music.mp3");
+
+document.getElementById("playButton").addEventListener("click", () => {
+    audio.play();
+    alert("Muzica ar trebui să pornească acum! ❤️");
+});
+</script>
+
+</body>
+</html>
